@@ -113,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         }, ContextCompat.getMainExecutor(this));
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Analyse-Thread beenden
+        analysisExecutor.shutdown();
     }
 }

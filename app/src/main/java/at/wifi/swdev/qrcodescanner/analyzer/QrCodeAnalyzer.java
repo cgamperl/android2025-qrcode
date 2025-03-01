@@ -2,6 +2,8 @@ package at.wifi.swdev.qrcodescanner.analyzer;
 
 import android.content.Context;
 import android.media.Image;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,9 +20,14 @@ import com.google.mlkit.vision.common.InputImage;
 
 public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
     private final Context context;
+    private boolean detectBarcodes;
 
     public QrCodeAnalyzer(Context context) {
         this.context = context;
+    }
+
+    public void setDetectBarcodes(boolean detectBarcodes) {
+        this.detectBarcodes = detectBarcodes;
     }
 
     @OptIn(markerClass = ExperimentalGetImage.class)
@@ -36,9 +43,7 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
             InputImage inputImage = InputImage.fromMediaImage(image, imageProxy.getImageInfo().getRotationDegrees());
 
             // Barcode-Erkennung konfigurieren
-            BarcodeScannerOptions options = new BarcodeScannerOptions.Builder()
-                    .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                    .build();
+            BarcodeScannerOptions options = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build();
 
             // Barcode-Scanner bauen
             BarcodeScanner scanner = BarcodeScanning.getClient(options);
@@ -48,6 +53,10 @@ public class QrCodeAnalyzer implements ImageAnalysis.Analyzer {
 
                 // In dem Bild können mehrere Barcodes erkannt worden sein
                 for (Barcode barcode : barcodes) {
+                    // Haptisches Feedback
+                    Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+
                     Toast.makeText(context, "Barcode erkannt:" + barcode.getRawValue(), Toast.LENGTH_SHORT).show();
                 }
             });
