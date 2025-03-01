@@ -6,6 +6,8 @@ android {
     namespace = "at.wifi.swdev.qrcodescanner"
     compileSdk = 35
 
+    buildFeatures.viewBinding = true
+
     defaultConfig {
         applicationId = "at.wifi.swdev.qrcodescanner"
         minSdk = 29
